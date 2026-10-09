@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forty-Eight Scripts, One Root</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Devanagari&family=Noto+Sans+Bengali&family=Noto+Sans+Gujarati&family=Noto+Sans+Gurmukhi&family=Noto+Sans+Oriya&family=Noto+Sans+Tamil&family=Noto+Sans+Malayalam&family=Noto+Sans+Kannada&family=Noto+Sans+Telugu&family=Noto+Sans+Sinhala&family=Noto+Sans+Tibetan&family=Noto+Sans+Khmer&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f0e2;
+    --bg-2: #efe7d3;
+    --paper-base: #ece0bf;
+    --line: #cdbb92;
+    --line-dim: #ddd0ab;
+    --ink: #2b2316;
+    --ink-dim: #7c7057;
+    --persimmon: #cf5a28;
+    --persimmon-dim: #e2b193;
+
+    --t-religious: #a5402a;
+    --t-merchant: #6f7a35;
+    --t-colonial: #56687d;
+    --t-revival: #b98a24;
+    --t-royal: #6c4a80;
+    --t-trade: #2c7d75;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif; overflow:hidden; }
+  h1,h2,h3{ font-family:'Fraunces', serif; margin:0; font-weight:600; }
+
+  .app{ display:grid; grid-template-columns: 300px 1fr 340px; height:100vh; }
+
+  /* ---------- Papyrus texture ---------- */
+  .papyrus{
+    background-color: var(--paper-base);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.35  0 0 0 0 0.27  0 0 0 0 0.14  0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(110,84,42,0.08) 0px, rgba(110,84,42,0.08) 1px, transparent 1px, transparent 5px),
+      repeating-linear-gradient(0deg, rgba(110,84,42,0.06) 0px, rgba(110,84,42,0.06) 1px, transparent 1px, transparent 8px),
+      radial-gradient(ellipse at 18% 12%, rgba(160,118,55,0.14), transparent 55%),
+      radial-gradient(ellipse at 82% 88%, rgba(150,108,48,0.12), transparent 55%);
+    background-size: 140px 140px, auto, auto, auto, auto;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .rail{
+    border-right: 1px solid var(--line);
+    padding: 28px 24px;
+    overflow-y: auto;
+    display:flex; flex-direction:column; gap: 24px;
+  }
+  .rail h1{ font-size: 25px; line-height:1.15; color:var(--ink); }
+  .rail .sub{ color:var(--ink-dim); font-size:13.5px; line-height:1.55; margin-top:10px; }
+
+  .section-label{ font-size:12.5px; color:var(--ink-dim); margin-bottom:10px; }
+
+  .threads{ display:flex; flex-direction:column; gap:8px; }
+  .thread-btn{
+    display:flex; align-items:center; gap:10px;
+    background: rgba(255,251,240,0.5); border:1px solid var(--line);
+    color: var(--ink); padding:9px 12px; border-radius:3px;
+    font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; text-align:left;
+    cursor:pointer; transition: border-color .15s, background .15s;
+  }
+  .thread-btn:hover{ border-color: var(--dot-color, var(--persimmon)); }
+  .thread-btn .dot{
+    width:10px; height:10px; border-radius:50%; flex:0 0 auto;
+    background: var(--dot-color);
+  }
+  .thread-btn.active{
+    background: color-mix(in srgb, var(--dot-color) 20%, rgba(255,251,240,0.5));
+    border-color: var(--dot-color);
+  }
+  .thread-btn .desc{ color: var(--ink-dim); font-size:11.5px; display:block; margin-top:1px; }
+  .thread-btn .txt{ display:flex; flex-direction:column; }
+
+  .geo-grid{ display:flex; flex-wrap:wrap; gap:6px; }
+  .geo-btn{
+    background: rgba(255,251,240,0.5); border:1px solid var(--line); color:var(--ink);
+    padding:6px 10px; border-radius:3px; font-size:12px; cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif; transition: border-color .15s, background .15s;
+  }
+  .geo-btn:hover{ border-color: var(--persimmon); }
+  .geo-btn.active{
+    background: color-mix(in srgb, var(--persimmon) 20%, rgba(255,251,240,0.5));
+    border-color: var(--persimmon); color: #7a2f10;
+  }
+
+  .clear-btn{
+    align-self:flex-start; background:none; border:none; color:var(--ink-dim);
+    font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0;
+  }
+  .clear-btn:hover{ color: var(--ink); }
+
+  .count{ font-size:12.5px; color:var(--ink-dim); border-top:1px solid var(--line); padding-top:16px; margin-top:auto; }
+  .count strong{ color:var(--ink); font-family:'Fraunces',serif; font-size:20px; display:block; margin-bottom:2px; font-weight:500;}
+
+  /* ---------- Canvas ---------- */
+  .canvas-outer{ position:relative; overflow:hidden; background:
+      radial-gradient(circle at 15% 10%, #faf6e9 0%, var(--bg) 55%); }
+  .canvas-scroll{ position:absolute; inset:0; overflow:auto; }
+  .canvas-inner{ transform-origin: top left; }
+  svg text{ font-family:'IBM Plex Sans', sans-serif; user-select:none; }
+  .node-box{ cursor:pointer; }
+  .node-box rect{ fill: #efe4c9; stroke: var(--line); stroke-width:1; transition: opacity .2s, stroke .2s, fill .2s; }
+  .node-box text{ fill: var(--ink); transition: opacity .2s, fill .2s; }
+  .node-box .code{ fill: var(--ink-dim); }
+  .node-box.dim rect{ opacity:.28; }
+  .node-box.dim text{ opacity:.28; }
+  .node-box.selected rect{ stroke: var(--persimmon); stroke-width:2.4; }
+  .edge{ fill:none; stroke: var(--line); stroke-width:1.4; transition: opacity .2s, stroke .2s; }
+  .edge.dim{ opacity:.15; }
+
+  .zoom-controls{
+    position:absolute; bottom:20px; right:20px; display:flex; gap:6px;
+    background: #efe4c9; border:1px solid var(--line); border-radius:4px; padding:5px;
+  }
+  .zoom-controls button{
+    width:30px; height:30px; background:#f6f0e2; color:var(--ink);
+    border:1px solid var(--line); border-radius:3px; font-size:15px; cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif;
+  }
+  .zoom-controls button:hover{ border-color: var(--persimmon); }
+
+  /* ---------- Panel (dedicated static column) ---------- */
+  .panel{
+    border-left:1px solid var(--line);
+    padding: 30px 26px;
+    overflow-y:auto;
+  }
+  .panel .crumb{ font-size:12px; color:var(--ink-dim); line-height:1.6; margin-bottom:16px; }
+  .panel .crumb b{ color: var(--ink); font-weight:500; }
+  .panel h2{ font-size:23px; line-height:1.2; margin-bottom:4px; }
+  .panel .code-tag{ font-size:12px; color:var(--ink-dim); margin-bottom:16px; display:block; }
+  .panel .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .panel .chip{
+    font-size:11.5px; padding:4px 9px; border-radius:3px; border:1px solid var(--chip-color);
+    color: var(--chip-color); cursor:pointer; background: color-mix(in srgb, var(--chip-color) 14%, transparent);
+  }
+  .panel .chip.geo{ --chip-color: var(--persimmon); }
+  .panel p{ font-size:14.5px; line-height:1.7; color: #453a26; }
+  .panel .placeholder{ color: var(--ink-dim); font-size:14px; line-height:1.7; margin-top:10px; }
+  .panel .clear-link{ font-size:12px; color:var(--ink-dim); text-decoration:underline; cursor:pointer; display:inline-block; margin-bottom:16px; background:none; border:none; padding:0; font-family:'IBM Plex Sans',sans-serif; }
+  .panel .clear-link:hover{ color:var(--ink); }
+
+  .alpha-section{ margin-top:6px; margin-bottom:22px; padding: 16px; background: rgba(255,251,240,0.55); border:1px solid var(--line); border-radius:4px; }
+  .alpha-section .label{ font-size:11.5px; color:var(--ink-dim); margin-bottom:10px; }
+  .alpha-sample{ font-size:34px; line-height:1.3; color:var(--ink); margin-bottom:6px; }
+  .alpha-caption{ font-size:11.5px; color:var(--ink-dim); }
+  .alpha-none{ font-size:13px; color:var(--ink-dim); font-style:italic; line-height:1.6; }
+  .panel-close-mobile{ display:none; }
+
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb{ background:#d3c194; border-radius:5px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  @media (max-width: 980px){
+    .app{ grid-template-columns: 260px 1fr; grid-template-rows: 1fr; }
+    .panel{ display:none; }
+    .panel.mobile-open{ display:block; position:fixed; inset:0; z-index:20; height:100vh; }
+    .panel-close-mobile{ display:none; }
+    .panel.mobile-open .panel-close-mobile{ display:inline-block; margin-bottom:14px; background:var(--persimmon); color:#fff; border:none; padding:8px 14px; border-radius:3px; font-size:13px; cursor:pointer; }
+  }
+  @media (max-width: 820px){
+    .app{ grid-template-columns: 1fr; grid-template-rows: 40vh 60vh; }
+    .rail{ border-right:none; border-bottom:1px solid var(--line); padding:18px; gap:16px; min-height:0; }
+    .rail h1{ font-size:20px; }
+    .threads{ flex-direction:row; flex-wrap:wrap; }
+    .thread-btn{ flex:1 1 45%; }
+    .count{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="rail papyrus">
+    <div>
+      <h1>Forty-eight scripts,<br>one root</h1>
+      <p class="sub">An independently researched family tree of Brahmi-derived writing systems. Toggle a thread or region below to trace it through the tree.</p>
+    </div>
+
+    <div>
+      <div class="section-label">Threads</div>
+      <div class="threads" id="threads"></div>
+      <button class="clear-btn" id="clearBtn" style="margin-top:10px;">Clear selection</button>
+    </div>
+
+    <div>
+      <div class="section-label">Geography</div>
+      <div class="geo-grid" id="geoGrid"></div>
+    </div>
+
+    <div class="count" id="countBox"></div>
+  </aside>
+
+  <main class="canvas-outer" id="canvasOuter">
+    <div class="canvas-scroll" id="canvasWrap">
+      <div class="canvas-inner" id="canvasInner">
+        <svg id="tree" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+    <div class="zoom-controls">
+      <button id="zoomOut">–</button>
+      <button id="zoomReset">◎</button>
+      <button id="zoomIn">+</button>
+    </div>
+  </main>
+
+  <aside class="panel papyrus" id="panel">
+    <button class="panel-close-mobile" id="panelCloseMobile">Close</button>
+    <div id="panelContent"></div>
+  </aside>
+</div>
+
+<script>
+/* ============================ THEME DEFINITIONS ============================ */
+const THEMES = {
+  religious: { label: "Faith & transmission", color: "var(--t-religious)", desc: "Carried by monks, preachers, and missionaries" },
+  merchant:  { label: "Ledgers & shorthand",   color: "var(--t-merchant)",  desc: "Made by and for merchants and record-keepers" },
+  colonial:  { label: "Colonial administration", color: "var(--t-colonial)", desc: "Shaped by British-era policy decisions" },
+  revival:   { label: "Extinct & reviving",    color: "var(--t-revival)",  desc: "Endangered or extinct, with revival efforts" },
+  royal:     { label: "Royal commissions",     color: "var(--t-royal)",    desc: "Created or championed by kings, khans, gurus" },
+  trade:     { label: "Trade & diaspora routes", color: "var(--t-trade)",  desc: "Spread along maritime and overland trade" },
+};
+
+const REGIONS = {
+  nwsa:  "Northwest South Asia",
+  nind:  "North India",
+  wind:  "West India",
+  enind: "East & Northeast India",
+  himal: "Himalayan & Tibetan Plateau",
+  sind:  "South India & Sri Lanka",
+  casia: "Central Asia & Mongolia",
+  easia: "East Asia",
+  sea:   "Southeast Asia",
+};
+
+/* ============================ SCRIPT DATA ============================ */
+const DATA = [
+{code:"1", name:"Brahmi", region:"nind", themes:[], blurb:"Branching off Phoenician, Brahmi is the oldest proven script used to write Sanskrit — the root of nearly every writing system on this tree."},
+{code:"1.1", name:"Northern Brahmic", region:"nind", themes:[], blurb:"As Brahmi spread across the subcontinent it split into regional styles. This northern branch, most likely first shaped under Ashoka, underlies most North Indian scripts."},
+{code:"1.1.1", name:"Gupta", region:"nind", themes:[], blurb:"Evolving from Ashokan Brahmi, Gupta is noticeably more cursive than its predecessor — the start of a long trend toward faster, looser writing."},
+{code:"1.1.2", name:"Tocharian", region:"casia", themes:["religious","trade"], blurb:"A shorthand form of Brahmi used to write Buddhist texts in the Tarim Basin, north of Tibet. Long confused with the script of the Tokharian people of Bactria, it was likely used by Uyghurs until contact with Islam around the 9th century."},
+{code:"1.1.1.1", name:"Sharada", region:"nwsa", themes:["revival"], blurb:"Once used from Northwest India to Afghanistan, Sharada survives today with the Kashmiri Pandit community and gave rise to many later Punjabi and Rajasthani scripts."},
+{code:"1.1.1.1.1", name:"Landa", region:"nwsa", themes:["merchant"], blurb:"Used in Punjab and Sindh, the name translates to \"without a tail.\" It was so cursive that, as the saying goes, only the person who wrote a Landa text could read it back."},
+{code:"1.1.1.1.1.1", name:"Mahajani", region:"wind", themes:["merchant"], blurb:"A Rajasthani script used almost exclusively by Marwadi businessmen for bookkeeping."},
+{code:"1.1.1.1.1.2", name:"Multani", region:"nwsa", themes:["merchant","colonial","revival"], blurb:"An evolved Landa script once common in Sindh. The first book printed in it was a New Testament in 1819; afterward, British colonial policy made Arabic the region's standard script. It was never revived — Punjabi in Pakistan is now written in Shahmukhi."},
+{code:"1.1.1.1.1.3", name:"Gurumukhi", region:"nwsa", themes:["religious","royal"], sample:"ਗੁਰਮੁਖੀ", sampleFont:"'Noto Sans Gurmukhi', sans-serif", blurb:"Created by the second Sikh Guru, Guru Angad — partly because Landa was too easily misread. It's now the script of Indian Punjab and carries Sikh identity, in contrast to the Shahmukhi used by Punjabi Muslims."},
+{code:"1.1.1.1.1.4", name:"Khudawadi", region:"nwsa", themes:["merchant","colonial","revival"], blurb:"Named for the city of Khudabad, it became the preferred script of Sindhi businessmen. After the British conquest of Sindh, colonial officials famously debated whether Devanagari, Arabic, or Khudawadi should be the region's official script — Arabic won administratively, but Khudawadi is still taught and used today."},
+{code:"1.1.1.1.1.5", name:"Khoja/Khojki", region:"nwsa", themes:["religious"], blurb:"Devised by the Shia Ismaili preacher Pir Sadr al-Din for the Khoja community of Sindh, Punjab, Gujarat, and Maharashtra — a Brahmi-based script chosen to reflect his teaching of syncretism between Hinduism and Islam."},
+{code:"1.1.1.1.2", name:"Kashmiri/Takri", region:"himal", themes:["revival"], blurb:"Used historically around Kashmir and Himachal Pradesh. Though the script is now extinct, revival efforts are underway in Himachal Pradesh and northern Punjab."},
+{code:"1.1.1.1.2.1", name:"Dogri", region:"himal", themes:["royal","revival"], blurb:"The script of the Dogri people of Jammu & Kashmir, gradually replaced by Devanagari. Maharaja Ranbir Singh tried reviving it as \"Dogri Akhars\" in the 19th century, but it never caught on."},
+{code:"1.1.1.1.2.2", name:"Jaunsari/Sirmauri", region:"himal", themes:["revival"], blurb:"Two related Pahari scripts from around Uttarakhand and Himachal Pradesh, both with declining speaker numbers and both largely substituted by Devanagari."},
+{code:"1.1.1.2", name:"Kutila", region:"nind", themes:["royal"], blurb:"Identified from an inscription found in Bareilly by a Kannauj engraver, Kutila marks a key step toward modern scripts like Devanagari. The inscription records temples built by Lalla of the Chhinda dynasty, vassals of Kannauj."},
+{code:"1.1.1.2.1", name:"Nagari", region:"nind", themes:[], blurb:"A pivotal script in the development of most modern Brahmi-derived scripts — \"Nagari\" is still often used as shorthand for Devanagari itself."},
+{code:"1.1.1.2.1.1", name:"Nandinagari", region:"sind", themes:["royal"], blurb:"Used across South India and the Deccan, preserved in manuscripts like the Vikramacarita — legendary tales of King Vikramaditya, whose real empire, era, and even capital remain genuinely uncertain despite centuries of legend."},
+{code:"1.1.1.2.1.2", name:"Kaithi", region:"nind", themes:["merchant","colonial","revival"], blurb:"Rising under Mughal rule and likely named for the Kayastha scribal caste, Kaithi became the official script of Bihari courts under the British Raj, championed by the heavily decorated General George Campbell. It remained in local courts until the 1950s but is now considered extinct."},
+{code:"1.1.1.2.1.2.1", name:"Sylheti Nagari", region:"enind", themes:["religious","revival"], blurb:"Used around Bengal and Assam into the 2000s. Its origin is genuinely contested — theories credit Sylheti Muslims, a Vaishnavite reawakening movement, Afghan rulers, Bihari soldiers, or migrating Gujarati Nagar Brahmins. Revival efforts are ongoing."},
+{code:"1.1.1.2.1.3", name:"Devanagari", region:"nind", themes:[], sample:"देवनागरी", sampleFont:"'Noto Sans Devanagari', serif", blurb:"You know what Devanagari is."},
+{code:"1.1.1.2.1.4", name:"Gujarati", region:"wind", themes:["trade"], sample:"ગુજરાતી", sampleFont:"'Noto Sans Gujarati', sans-serif", blurb:"Possibly the ancestor of the indigenous scripts of Sumatra, Sulawesi, and the Philippines, carried by large Gujarati merchant communities trading through the Strait of Malacca between the 10th and 15th centuries."},
+{code:"1.1.1.2.1.5", name:"Modi", region:"wind", themes:["merchant"], blurb:"The primary Marathi script from the late Yadav dynasty through the Peshwa era. Created by the administrator Hemadpant, modeled on the Persian Shikasta shorthand he saw used in Mughal courts — fittingly, both names translate to \"broken.\""},
+{code:"1.1.1.2.1.5.1", name:"Gunjala Gondi", region:"sind", themes:["revival"], blurb:"The Gondi language had no script of its own for millennia, despite the Gonds' presence in India since 2000 BC. Likely derived from Modi, this script was rediscovered in the village of Gunjala and is now being promoted as a universal Gond script."},
+{code:"1.1.1.3", name:"Sidham", region:"easia", themes:["religious","trade"], blurb:"Carried by Buddhist monks along the Silk Road, Sidham was used across East Asia to preserve exact pronunciation of sacred texts — favored over Chinese, Korean, or Japanese for that purpose."},
+{code:"1.1.1.3.1", name:"Gaudi", region:"enind", themes:[], blurb:"Used in East India, also known as Proto-Bengali or Proto-Oriya."},
+{code:"1.1.1.3.1.1", name:"Bangla", region:"enind", themes:[], sample:"বাংলা", sampleFont:"'Noto Sans Bengali', sans-serif", blurb:"Emerged around the 10th–11th century from the blending of Sanskrit and Prakrit — the natural evolution of Proto-Bangla."},
+{code:"1.1.1.3.1.2", name:"Assamese", region:"enind", themes:["royal"], sample:"অসমীয়া", sampleFont:"'Noto Sans Bengali', sans-serif", blurb:"Used by dynasties like the Ahom. Its resemblance to Gupta-era inscriptions on the Allahabad pillar is intriguing but inconclusive — the pillar was moved and re-inscribed across several reigns, muddying the evidence."},
+{code:"1.1.1.3.1.3", name:"Mithilakshar/Tirhuta", region:"enind", themes:["royal"], blurb:"From the Mithila (Tirhut) region spanning east Bihar and parts of Nepal — once home to King Janak of the Ramayana, whose daughter Sita was also known as Maithili."},
+{code:"1.1.1.3.1.4", name:"Oriya", region:"enind", themes:["royal"], sample:"ଓଡ଼ିଆ", sampleFont:"'Noto Sans Oriya', sans-serif", blurb:"Its ancient inscriptions largely come from the Gajapatis — four successive dynasties who held that title until the Mughal Empire ended their rule."},
+{code:"1.1.1.3.2", name:"Newari", region:"himal", themes:[], blurb:"Written historically in several incomplete scripts; the more legible Pracalit style has survived alongside the Ranjana style."},
+{code:"1.1.1.3.2.1", name:"Soyombo", region:"casia", themes:["religious","royal"], blurb:"Brought to Tibet by the scholar Zanabazar and derived from Kashmiri/Nepali Newari Ranjana, its name means \"self-made.\" The Soyombo symbol still appears on the Mongolian flag today."},
+{code:"1.1.1.3.3", name:"Tibetan", region:"himal", themes:["religious","royal"], sample:"བོད་ཡིག", sampleFont:"'Noto Sans Tibetan', sans-serif", blurb:"Said to have been commissioned by Songtsen Gampo, the first of Tibet's three Dharma Kings, who introduced Buddhism and built an empire reaching Bengal and China roughly 1,200 years before Genghis Khan's."},
+{code:"1.1.1.3.3.1", name:"Limbu", region:"himal", themes:["royal"], blurb:"Created by Te-Ongsi Sirijunga Xin Thebe for the Limbu people of Nepal, part of the larger Kirati people mentioned as far back as the Mahabharata."},
+{code:"1.1.1.3.3.2", name:"Lepcha", region:"himal", themes:["royal"], blurb:"Commissioned in Sikkim by the Chogyal Chakdor Namgyal, whose reign was consumed by an extraordinary run of assassination plots from his half-sister, Pende Ongmu — the last of which finally succeeded."},
+{code:"1.1.1.3.3.3", name:"Phags-pa", region:"casia", themes:["religious","royal","trade"], blurb:"Ordered by Kublai Khan and designed by the monk Phags-pa to unify the many languages of the Mongol empire — Mongolian, Persian, Sanskrit, and more. It was the official script of the Yuan Dynasty for about a decade."},
+{code:"1.1.1.4", name:"Meitei Mayek", region:"enind", themes:["religious","revival"], blurb:"The script of Manipur, once used to write Pali (which had no script of its own) in a squarer form nicknamed \"square Pali.\" Largely displaced by Bengali-Assamese scripts, it has seen a government-backed resurgence as a co-official script."},
+{code:"1.2", name:"Bhattiprolu Brahmi", region:"sind", fullName:"Bhattiprolu Brahmi / Tamil Brahmi", themes:["religious","trade"], blurb:"Discovered in 1892 in stupas at Bhattiprolu, Andhra Pradesh — alongside relics, jewels, and cremated remains attributed to the Buddha — this is the oldest known Dravidian offshoot of Brahmi."},
+{code:"1.2.1", name:"Pallava", region:"sind", themes:[], blurb:"Named for the Pallava dynasty, one of the oldest distinctly Dravidian scripts."},
+{code:"1.2.1.1", name:"Tamil", region:"sind", themes:[], sample:"தமிழ்", sampleFont:"'Noto Sans Tamil', sans-serif", blurb:"Written on cured palm leaves scratched with a knife-like pen and darkened with natural dye. The oldest surviving Tamil palm-leaf manuscript, the Tolkaappiyam, covers phonology, grammar, and poetry across three books."},
+{code:"1.2.1.2", name:"Khmer", region:"sea", themes:["religious","trade"], sample:"ខ្មែរ", sampleFont:"'Noto Sans Khmer', sans-serif", blurb:"Derived from South Indian Brahmi, Khmer first wrote Old Khmer and Sanskrit before shifting to Pali with the spread of Buddhism. Its oldest inscription comes from Angkor Borei, once capital of the trade-based Funan kingdom."},
+{code:"1.2.1.3", name:"Sinhala", region:"sind", themes:[], sample:"සිංහල", sampleFont:"'Noto Sans Sinhala', sans-serif", blurb:"Sri Lanka's script, developed alongside Tamil and Grantha and heavily shaped by both afterward."},
+{code:"1.2.1.4", name:"Grantha", region:"sind", themes:[], blurb:"Used across South India primarily to write Sanskrit in Dravidian-speaking regions, and a major influence on the scripts that followed it."},
+{code:"1.2.1.4.1", name:"Malayalam", region:"sind", themes:["royal"], sample:"മലയാളം", sampleFont:"'Noto Sans Malayalam', sans-serif", blurb:"Emerged when the Chola dynasty imported Grantha around the 8th–9th century; the Western Ghats then isolated Kerala enough for the language and script to diverge into Malayalam and Tulu."},
+{code:"1.2.1.4.2", name:"Tigalari/Tulu", region:"sind", themes:["revival"], blurb:"Used to write the Tulu language around coastal Karnataka and Kerala; the Karnataka Tulu Sahitya Academy is now working to revive both."},
+{code:"1.2.2", name:"Kadamba", region:"sind", themes:["royal"], blurb:"Named for the Kadamba dynasty, whose own origins — local tribes or migrants from the north — remain unclear."},
+{code:"1.2.2.1", name:"Telugu-Kannada", region:"sind", themes:[], blurb:"A precursor script to both Telugu and Kannada, still mutually legible to readers of its modern descendants."},
+{code:"1.2.2.1.1", name:"Telugu", region:"sind", themes:[], sample:"తెలుగు", sampleFont:"'Noto Sans Telugu', sans-serif", blurb:"Split officially from Kannada around 1300 CE, when it was also known as Andhri."},
+{code:"1.2.2.1.2", name:"Kannada", region:"sind", themes:[], sample:"ಕನ್ನಡ", sampleFont:"'Noto Sans Kannada', sans-serif", blurb:"Continued evolving after the 1300 CE split from Telugu-Kannada; older, expanded alphabets survive in some regions, notably Tamil Nadu's Nilgiris district."},
+];
+
+/* ============================ BUILD TREE ============================ */
+const byCode = {};
+DATA.forEach(d => { d.children = []; byCode[d.code] = d; });
+DATA.forEach(d => {
+  const parts = d.code.split(".");
+  if(parts.length > 1){
+    const parentCode = parts.slice(0, -1).join(".");
+    d.parent = byCode[parentCode];
+    byCode[parentCode].children.push(d);
+  }
+});
+const root = byCode["1"];
+DATA.forEach(d => d.children.sort((a,b) => {
+  const ap = a.code.split(".").map(Number), bp = b.code.split(".").map(Number);
+  return ap[ap.length-1] - bp[bp.length-1];
+}));
+
+let leafCounter = 0;
+function assignY(node){
+  if(node.children.length === 0){
+    node.y = leafCounter++;
+  } else {
+    node.children.forEach(assignY);
+    const ys = node.children.map(c => c.y);
+    node.y = (Math.min(...ys) + Math.max(...ys)) / 2;
+  }
+  node.depth = node.code.split(".").length - 1;
+}
+assignY(root);
+
+/* ============================ LAYOUT ============================ */
+const X_SPACING = 205, Y_SPACING = 52, BOX_H = 36, PAD = 60;
+function boxWidth(name){
+  return Math.max(112, Math.min(178, name.length * 6.6 + 26));
+}
+DATA.forEach(d => {
+  d.px = d.depth * X_SPACING + PAD;
+  d.py = d.y * Y_SPACING + PAD;
+  d.pw = boxWidth(d.name);
+});
+const maxDepth = Math.max(...DATA.map(d => d.depth));
+const svgW = maxDepth * X_SPACING + PAD * 2 + 180;
+const svgH = leafCounter * Y_SPACING + PAD * 2;
+
+function wrapLabel(name){
+  if(name.length <= 15) return [name];
+  let splitAt = -1;
+  for(const sep of ["/", " "]){
+    const idx = name.indexOf(sep, Math.floor(name.length/2) - 6);
+    if(idx > 0 && idx < name.length - 1){ splitAt = idx; break; }
+  }
+  if(splitAt === -1){
+    for(const sep of ["/", " "]){
+      const idx = name.indexOf(sep);
+      if(idx > 0){ splitAt = idx; break; }
+    }
+  }
+  if(splitAt === -1) return [name];
+  const keep = name[splitAt] === "/" ? 1 : 0;
+  return [name.slice(0, splitAt + keep), name.slice(splitAt + 1).trim()];
+}
+
+/* ============================ RENDER SVG ============================ */
+const svg = document.getElementById("tree");
+svg.setAttribute("viewBox", `0 0 ${svgW} ${svgH}`);
+svg.setAttribute("width", svgW);
+svg.setAttribute("height", svgH);
+
+function svgEl(tag, attrs){
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for(const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+const edgeLayer = svgEl("g", {class:"edges"});
+svg.appendChild(edgeLayer);
+DATA.forEach(d => {
+  if(!d.parent) return;
+  const p = d.parent;
+  const x1 = p.px + p.pw, y1 = p.py + BOX_H/2;
+  const x2 = d.px, y2 = d.py + BOX_H/2;
+  const midX = (x1 + x2) / 2;
+  const path = svgEl("path", {
+    class: "edge",
+    d: `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`,
+    id: "edge-" + d.code.replace(/\./g,"-")
+  });
+  edgeLayer.appendChild(path);
+});
+
+const nodeLayer = svgEl("g", {class:"nodes"});
+svg.appendChild(nodeLayer);
+DATA.forEach(d => {
+  const g = svgEl("g", {class:"node-box", "data-code": d.code, id:"node-"+d.code.replace(/\./g,"-")});
+  g.appendChild(svgEl("rect", {x:d.px, y:d.py, width:d.pw, height:BOX_H, rx:2}));
+  const lines = wrapLabel(d.name);
+  const textY = lines.length === 1 ? d.py + BOX_H/2 + 4 : d.py + BOX_H/2 - 2;
+  const text = svgEl("text", {x: d.px + d.pw/2, y: textY, "text-anchor":"middle", "font-size": lines.length>1 ? 10 : 11.5});
+  lines.forEach((ln,i) => {
+    text.appendChild(svgEl("tspan", {x: d.px + d.pw/2, dy: i===0? 0 : 12}, )).textContent = ln;
+  });
+  g.appendChild(text);
+  const codeLabel = svgEl("text", {x: d.px + d.pw/2, y: d.py - 6, "text-anchor":"middle", "font-size":8.5, class:"code"});
+  codeLabel.textContent = d.code;
+  g.appendChild(codeLabel);
+  g.addEventListener("click", () => openPanel(d));
+  nodeLayer.appendChild(g);
+});
+
+/* ============================ SIDEBAR THREADS ============================ */
+const threadWrap = document.getElementById("threads");
+const activeThemes = new Set();
+
+Object.entries(THEMES).forEach(([key, t]) => {
+  const btn = document.createElement("button");
+  btn.className = "thread-btn";
+  btn.style.setProperty("--dot-color", t.color);
+  btn.dataset.theme = key;
+  btn.innerHTML = `<span class="dot"></span><span class="txt"><span>${t.label}</span><span class="desc">${t.desc}</span></span>`;
+  btn.addEventListener("click", () => {
+    if(activeThemes.has(key)) activeThemes.delete(key); else activeThemes.add(key);
+    btn.classList.toggle("active");
+    applyFilter();
+  });
+  threadWrap.appendChild(btn);
+});
+
+/* ============================ SIDEBAR GEOGRAPHY ============================ */
+const geoWrap = document.getElementById("geoGrid");
+const activeRegions = new Set();
+
+Object.entries(REGIONS).forEach(([key, label]) => {
+  const btn = document.createElement("button");
+  btn.className = "geo-btn";
+  btn.dataset.region = key;
+  btn.textContent = label;
+  btn.addEventListener("click", () => {
+    if(activeRegions.has(key)) activeRegions.delete(key); else activeRegions.add(key);
+    btn.classList.toggle("active");
+    applyFilter();
+  });
+  geoWrap.appendChild(btn);
+});
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+  activeThemes.clear();
+  activeRegions.clear();
+  document.querySelectorAll(".thread-btn.active, .geo-btn.active").forEach(b => b.classList.remove("active"));
+  applyFilter();
+});
+
+function applyFilter(){
+  const hasThread = activeThemes.size > 0;
+  const hasGeo = activeRegions.size > 0;
+  const hasFilter = hasThread || hasGeo;
+  let matchCount = 0;
+  DATA.forEach(d => {
+    const el = document.getElementById("node-"+d.code.replace(/\./g,"-"));
+    const themeMatch = !hasThread || d.themes.some(th => activeThemes.has(th));
+    const geoMatch = !hasGeo || activeRegions.has(d.region);
+    const matches = themeMatch && geoMatch;
+    if(hasFilter && matches) matchCount++;
+    const rect = el.querySelector("rect");
+    if(!hasFilter){
+      el.classList.remove("dim");
+      rect.style.stroke = "";
+      rect.style.strokeWidth = "1";
+    } else if(matches){
+      el.classList.remove("dim");
+      const firstMatch = hasThread ? d.themes.find(th => activeThemes.has(th)) : null;
+      rect.style.stroke = firstMatch ? `var(--t-${firstMatch})` : "var(--persimmon)";
+      rect.style.strokeWidth = "2";
+    } else {
+      el.classList.add("dim");
+      rect.style.stroke = "";
+      rect.style.strokeWidth = "1";
+    }
+  });
+  document.querySelectorAll(".edge").forEach(e => e.classList.toggle("dim", hasFilter));
+  const countBox = document.getElementById("countBox");
+  countBox.innerHTML = hasFilter
+    ? `<strong>${matchCount} / ${DATA.length}</strong>scripts match your selection`
+    : `<strong>${DATA.length}</strong>scripts across six centuries of adaptation`;
+}
+applyFilter();
+
+/* ============================ PANEL ============================ */
+const panel = document.getElementById("panel");
+const panelContent = document.getElementById("panelContent");
+
+function ancestorChain(d){
+  const chain = [];
+  let cur = d.parent;
+  while(cur){ chain.unshift(cur.name); cur = cur.parent; }
+  return chain;
+}
+
+function renderPlaceholder(){
+  panelContent.innerHTML = `
+    <h2 style="margin-bottom:10px;">The tree</h2>
+    <p class="placeholder">Select any script from the tree to see its lineage, the threads that run through it, where it was used, and — where a digital font still exists — its own name written in its own alphabet.</p>
+  `;
+}
+renderPlaceholder();
+
+function isMobile(){ return window.matchMedia("(max-width: 980px)").matches; }
+
+function openPanel(d){
+  document.querySelectorAll(".node-box.selected").forEach(el => el.classList.remove("selected"));
+  document.getElementById("node-"+d.code.replace(/\./g,"-")).classList.add("selected");
+
+  const crumb = ancestorChain(d);
+  const themeChips = d.themes.map(th => `<span class="chip" style="--chip-color:var(--t-${th})" data-theme="${th}">${THEMES[th].label}</span>`).join("");
+  const geoChip = `<span class="chip geo" data-region="${d.region}">${REGIONS[d.region]}</span>`;
+
+  const alphaHTML = d.sample
+    ? `<div class="alpha-section">
+         <div class="label">Alphabet</div>
+         <div class="alpha-sample" style="font-family:${d.sampleFont}">${d.sample}</div>
+         <div class="alpha-caption">The script's own name, self-rendered — still in everyday digital use today.</div>
+       </div>`
+    : `<div class="alpha-section">
+         <div class="label">Alphabet</div>
+         <p class="alpha-none">No standard digital font exists for this script, so it can't be reliably rendered here — it survives only in manuscripts, inscriptions, or scholarly transliteration.</p>
+       </div>`;
+
+  panelContent.innerHTML = `
+    <button class="clear-link" id="clearSelBtn">Clear selection</button>
+    ${crumb.length ? `<div class="crumb">${crumb.join(" → ")} → <b>${d.name}</b></div>` : ""}
+    <h2>${d.fullName || d.name}</h2>
+    <span class="code-tag">Code ${d.code}</span>
+    <div class="chips">${geoChip}${themeChips}</div>
+    ${alphaHTML}
+    <p>${d.blurb}</p>
+  `;
+  panelContent.querySelectorAll(".chip[data-theme]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const key = chip.dataset.theme;
+      const btn = document.querySelector(`.thread-btn[data-theme="${key}"]`);
+      if(!activeThemes.has(key)){ activeThemes.add(key); btn.classList.add("active"); applyFilter(); }
+    });
+  });
+  panelContent.querySelectorAll(".chip[data-region]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const key = chip.dataset.region;
+      const btn = document.querySelector(`.geo-btn[data-region="${key}"]`);
+      if(!activeRegions.has(key)){ activeRegions.add(key); btn.classList.add("active"); applyFilter(); }
+    });
+  });
+  document.getElementById("clearSelBtn").addEventListener("click", () => {
+    document.querySelectorAll(".node-box.selected").forEach(el => el.classList.remove("selected"));
+    renderPlaceholder();
+    if(isMobile()) panel.classList.remove("mobile-open");
+  });
+
+  if(isMobile()) panel.classList.add("mobile-open");
+}
+document.getElementById("panelCloseMobile").addEventListener("click", () => {
+  panel.classList.remove("mobile-open");
+});
+
+/* ============================ ZOOM ============================ */
+let zoom = 1;
+const inner = document.getElementById("canvasInner");
+function setZoom(z){
+  zoom = Math.max(0.5, Math.min(1.6, z));
+  inner.style.transform = `scale(${zoom})`;
+}
+document.getElementById("zoomIn").addEventListener("click", () => setZoom(zoom + 0.15));
+document.getElementById("zoomOut").addEventListener("click", () => setZoom(zoom - 0.15));
+document.getElementById("zoomReset").addEventListener("click", () => setZoom(1));
+
+document.getElementById("canvasWrap").scrollTo({left: 0, top: svgH/3});
+</script>
+</body>
+</html>
